@@ -8,4 +8,7 @@ urlpatterns = [
     url('^register/$',views.register),
     url('^register_exist/$',views.register_exist),
     url('^register_handle/$',views.register_handle),
+    url('^info/$',views.info),
+    url('^order/$',views.order),
+    url('^site/$',views.site),
 ]

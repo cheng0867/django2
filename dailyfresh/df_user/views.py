@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
 from hashlib import sha1
 from models import *
+from . import user_decorator
 
 # Create your views here.
 def register(request):
@@ -100,3 +101,44 @@ def login_handle(request):
 def logout(request):
     request.session.flush()
     return redirect('/')
+
+@user_decorator.login
+def info(request):
+    uid = request.session['user_id']
+    user = UserInfo.objects.get(id=uid)
+    context = {
+        'title':'用户中心',
+        'page_name':1,
+        'uname':user.uname,
+        'uphone':user.uphone,
+        'uaddress':user.uaddress,
+    }
+    return render(request,'df_user/user_center_info.html',context)
+
+@user_decorator.login
+def order(request):
+    context = {
+        'title':'用户中心',
+        'page_name':1,
+    }
+    return render(request,'df_user/user_center_order.html',context)
+
+@user_decorator.login
+def site(request):
+    # 找到数据库中的当前用户
+    user = UserInfo.objects.get(id=request.session['user_id'])
+    # 如果是post请求
+    if request.method == 'POST':
+        # 将post请求的数据写入当前对应的数据库中
+        post_obj = request.POST
+        user.ushou = post_obj.get('ushou')
+        user.uaddress = post_obj.get('uaddress')
+        user.uyoubian = post_obj.get('uyoubian')
+        user.uphone = post_obj.get('uphone')
+        user.save()
+    context = {
+        'title':'用户中心',
+        'page_name':1,
+        'user':user,
+    }
+    return render(request,'df_user/user_center_site.html',context)
