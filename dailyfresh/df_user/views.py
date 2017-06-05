@@ -142,3 +142,4 @@ def site(request):
         'user':user,
     }
     return render(request,'df_user/user_center_site.html',context)
+
